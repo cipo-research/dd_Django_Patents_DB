@@ -1,0 +1,128 @@
+from django.db import models
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVectorField
+
+# Create your models here.
+class pt_main(models.Model):
+    patentnumber = models.IntegerField(null=False, primary_key=True)
+    filingdate = models.CharField(max_length=10, null=True)
+    grantedate = models.CharField(max_length=11, null=True)
+    appstatuscode = models.CharField(max_length=2, null=True)
+    apptypecode = models.CharField(max_length=10, null=True)
+    patapptitleenglish = models.TextField(null=True)
+    patapptitlefrench = models.TextField(null=True)
+    bibliographicfileextractdate = models.CharField(max_length=10, null=True)
+    countryofpublicationcode = models.CharField(max_length=2, null=True)
+    documentkindtype = models.CharField(max_length=2, null=True)
+    examinationrequestdate = models.CharField(max_length=10, null=True)
+    filingcountrycode = models.CharField(max_length=2, null=True)
+    langfilingcode = models.CharField(max_length=2, null=True)
+    licenseforsaleindicator = models.BooleanField(null=True)
+    pctappnumber = models.CharField(max_length=17, null=True)
+    pctpubnumber = models.CharField(max_length=13, null=True)
+    pctpubdate = models.CharField(max_length=10, null=True)
+    parentappnumber = models.CharField(max_length=7, null=True)
+    pctarticle2239fulfilleddate = models.DateField(null=True)
+    pctsect371date = models.CharField(max_length=10, null=True)
+    pctpubcountrycode = models.CharField(max_length=2, null=True)
+    pubkindtype = models.CharField(max_length=2, null=True)
+    printedasamendedcountrycode = models.CharField(max_length=2, null=True)
+    search_vector = SearchVectorField(null=True)
+
+    class Meta:
+        indexes = (GinIndex(fields=['search_vector']),)
+
+class pt_priority_claim(models.Model):
+    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    foreignapp_patnumber = models.CharField(max_length=50, null=True)
+    priorityclaimkindcode = models.CharField(max_length=50, null=True)
+    priorityclaimcountrycode = models.CharField(max_length=2, null=True)
+    priorityclaimcountry = models.CharField(max_length=70, null=True)
+    priorityclaimcalendardate = models.CharField(max_length=11, null=True)
+    id = models.IntegerField(null=False, primary_key=True)
+    search_vector = SearchVectorField(null=True)
+
+    class Meta:
+        indexes = (GinIndex(fields=['search_vector']),)
+
+class pt_abstract(models.Model):
+    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    langfilingcode = models.CharField(max_length=2, null=True)
+    abstractlangcode = models.CharField(max_length=2, null=True)
+    abstracttext = models.TextField(null=True)
+    id = models.IntegerField(null=False, primary_key=True)
+    search_vector = SearchVectorField(null=True)
+
+    class Meta:
+        indexes = (GinIndex(fields=['search_vector']),)
+
+class pt_disclosure(models.Model):
+    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    disclosuretextsequencenumber = models.IntegerField(null=True)
+    langfilingcode = models.CharField(max_length=2, null=True)
+    disclosuretext = models.TextField(null=True)
+    id = models.IntegerField(null=False, primary_key=True)
+    search_vector = SearchVectorField(null=True)
+
+    class Meta:
+        indexes = (GinIndex(fields=['search_vector']),)
+
+class pt_interested_party(models.Model):
+    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    agenttypecode = models.CharField(max_length=25, null=True)
+    appltypecode = models.CharField(max_length=25, null=True)
+    interestedpartytypecode = models.CharField(max_length=4, null=True)
+    interestedpartytype = models.CharField(max_length=10, null=True)
+    ownerenabledate = models.CharField(max_length=10, null=True)
+    ownerenddate = models.CharField(max_length=10, null=True)
+    partyname = models.CharField(max_length=300, null=True)
+    partyaddressline1 = models.CharField(max_length=100, null=True)
+    partyaddressline2 = models.CharField(max_length=100, null=True)
+    partyaddressline3 = models.CharField(max_length=100, null=True)
+    partyaddressline4 = models.CharField(max_length=100, null=True)
+    partyaddressline5 = models.CharField(max_length=100, null=True)
+    partycity = models.CharField(max_length=50, null=True)
+    partyprovincecode = models.CharField(max_length=2, null=True)
+    partyprovince = models.CharField(max_length=25, null=True)
+    partypostalcode = models.CharField(max_length=10, null=True)
+    partycountrycode = models.CharField(max_length=2, null=True) 
+    partycountry = models.CharField(max_length=125, null=True)
+    id = models.IntegerField(null=False, primary_key=True)
+    search_vector = SearchVectorField(null=True)
+
+    class Meta:
+        indexes = (GinIndex(fields=['search_vector']),)
+
+class pt_ipc_classification(models.Model):
+    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    ipcclasssequencenumber = models.IntegerField(null=True)
+    ipcversiondate = models.DateField()
+    classificationlevel = models.CharField(max_length=1, null=True)
+    classificationstatuscode = models.CharField(max_length=1, null=True)
+    classificationstatus = models.CharField(max_length=50, null=True)
+    ipcsectioncode = models.CharField(max_length=1, null=True)
+    ipcsection = models.CharField(max_length=100, null=True)
+    ipcclasscode = models.CharField(max_length=2, null=True)
+    ipcclass = models.TextField(null=True)
+    ipcsubclasscode = models.CharField(max_length=1, null=True)
+    ipcsubclass = models.TextField(null=True)
+    ipcmaingroupcode = models.IntegerField(null=True)
+    ipcgroup = models.TextField(null=True)
+    ipcsubgroupcode = models.TextField(null=True)
+    ipcsubgroup = models.TextField(null=True)
+    id = models.IntegerField(null=False, primary_key=True)
+    search_vector = SearchVectorField(null=True)
+
+    class Meta:
+        indexes = (GinIndex(fields=['search_vector']),)
+
+class pt_claim(models.Model):
+    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    claimtextsequencenumber = models.CharField(max_length=4, null=True)
+    langfilingcode = models.CharField(max_length=2, null=True)
+    claimstext = models.TextField(null=True)
+    id = models.IntegerField(null=False, primary_key=True)
+    search_vector = SearchVectorField(null=True)
+
+    class Meta:
+        indexes = (GinIndex(fields=['search_vector']),)

@@ -1,0 +1,19 @@
+<html lang="en">
+<head>
+  <title>Patent Database Search</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+</head>
+<body>
+  <div class="container">
+    <h1>Patent IPC Classification Table Search Page</h1>
+    <form method="get" action="{% url 'searchipc' %}">
+      <label for="query">Search:</label>
+      <input type="text" id="query" name="query" class="form-control" placeholder="Search by patent number, ipc class, subclass, or section...">
+      <button type="submit">Search</button>
+    </form>
+  </div>
+</body>
+</html>
