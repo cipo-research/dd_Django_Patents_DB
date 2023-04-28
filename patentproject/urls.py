@@ -75,6 +75,7 @@ pt_claim_router.register(
     basename='pt_claim',
 )
 
+# URL patterns to access different tables, and their search funtionalities
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(pt_main_router.urls)),

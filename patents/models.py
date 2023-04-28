@@ -3,6 +3,13 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 
 # Create your models here.
+
+# Each "model" class represents a table in our database, with each field being a column
+#   in its respective table.
+# Each model also has a Meta subclass. These are necessary for us to be able to use full-text
+#   search when querying in each table, but they have no effect on the actual structure of the
+#   tables in the database
+
 class pt_main(models.Model):
     patentnumber = models.IntegerField(null=False, primary_key=True)
     filingdate = models.CharField(max_length=10, null=True)

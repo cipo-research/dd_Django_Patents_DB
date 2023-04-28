@@ -60,6 +60,7 @@ def pt_mainFullTextSearch(request):
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
 
     search_query = SearchQuery(query, search_type='raw', config='english')
+    # search_vector contains information on which columns of the respective table will get searched for any query made
     search_vector = SearchVector('patentnumber', weight='A', config='english') + SearchVector('patapptitleenglish', weight='B') + SearchVector('patapptitlefrench', weight='C')
 
     records = pt_main.objects.annotate(
@@ -82,6 +83,7 @@ def pt_abstractFullTextSearch(request):
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
 
     search_query = SearchQuery(query, search_type='raw', config='english')
+    # search_vector contains information on which columns of the respective table will get searched for any query made
     search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('abstracttext', weight='B')
 
     records = pt_abstract.objects.annotate(
@@ -104,6 +106,7 @@ def pt_claimFullTextSearch(request):
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
 
     search_query = SearchQuery(query, search_type='raw', config='english')
+    # search_vector contains information on which columns of the respective table will get searched for any query made
     search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('claimstext', weight='B')
 
     records = pt_claim.objects.annotate(
@@ -126,6 +129,7 @@ def pt_disclosureFullTextSearch(request):
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
 
     search_query = SearchQuery(query, search_type='raw', config='english')
+    # search_vector contains information on which columns of the respective table will get searched for any query made
     search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('disclosuretext', weight='B')
 
     records = pt_disclosure.objects.annotate(
@@ -148,6 +152,7 @@ def pt_interested_partyFullTextSearch(request):
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
 
     search_query = SearchQuery(query, search_type='raw', config='english')
+    # search_vector contains information on which columns of the respective table will get searched for any query made
     search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('partyname', weight='B') + SearchVector('partycountry', weight='C')
 
     records = pt_interested_party.objects.annotate(
@@ -170,6 +175,7 @@ def pt_ipc_classificationFullTextSearch(request):
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
 
     search_query = SearchQuery(query, search_type='raw', config='english')
+    # search_vector contains information on which columns of the respective table will get searched for any query made
     search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('ipcclass', weight='B') + SearchVector('ipcsubclass', weight='C') + SearchVector('ipcsection', weight='D')
 
     records = pt_ipc_classification.objects.annotate(
@@ -192,6 +198,7 @@ def pt_priority_claimFullTextSearch(request):
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
 
     search_query = SearchQuery(query, search_type='raw', config='english')
+    # search_vector contains information on which columns of the respective table will get searched for any query made
     search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('foreignapp_patnumber', weight='B') + SearchVector('priorityclaimcountry', weight='C')
 
     records = pt_priority_claim.objects.annotate(
