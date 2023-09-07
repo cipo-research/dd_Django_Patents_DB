@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from patents import views
-from patents.views import DisclosureList, IPCList, InterestedPartyList, PriorityClaimList, ClaimList, AbstractList, MainList, pt_mainViewSet, pt_priority_claimViewSet, pt_abstractViewSet, pt_disclosureViewSet, pt_interested_partyViewSet, pt_ipc_classificationViewSet, pt_claimViewSet
+from patents.views import DisclosureList, IPCList, InterestedPartyList, ClaimList, AbstractList, MainList, pt_mainViewSet, pt_abstractViewSet, pt_disclosureViewSet, pt_interested_partyViewSet, pt_ipc_classificationViewSet, pt_claimViewSet
 
 # pt_main router
 pt_main_router = routers.SimpleRouter()
@@ -71,7 +71,6 @@ pt_claim_router.register(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(pt_main_router.urls)),
-    path('api/', include(pt_priority_claim_router.urls)),
     path('api/', include(pt_abstract_router.urls)),
     path('api/', include(pt_disclosure_router.urls)),
     path('api/', include(pt_interested_party_router.urls)),
@@ -84,8 +83,6 @@ urlpatterns = [
     path('ftsearch-claim/', views.pt_claimFullTextSearch, name='searchclaim'),
     path('disclosuresearchpage/', DisclosureList.as_view(), name="disclosuresearch-page"),
     path('ftsearch-disclosure/', views.pt_disclosureFullTextSearch, name='searchdisclosure'),
-    path('priorityclaimsearchpage/', PriorityClaimList.as_view(), name="priorityclaimsearch-page"),
-    path('ftsearch-priorityclaim/', views.pt_priority_claimFullTextSearch, name='searchpriority'),
     path('interestedpartysearchpage/', InterestedPartyList.as_view(), name="interestedpartysearch-page"),
     path('ftsearch-interestedparty/', views.pt_interested_partyFullTextSearch, name='searchinterested'),
     path('ipcsearchpage/', IPCList.as_view(), name="ipcsearch-page"),

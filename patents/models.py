@@ -93,7 +93,7 @@ class pt_ipc_classification(models.Model):
     classificationstatuscode = models.CharField(max_length=1, null=True)
     classificationstatus = models.CharField(max_length=50, null=True)
     classofficecountrycode = models.CharField(max_length=2, null=True)
-    generationofficecountry = models.CharField(max_Length=70, null=True)
+    generationofficecountry = models.CharField(max_length=70, null=True)
     ipclevelcode = models.CharField(max_length=1, null=True)
     ipcsectioncode = models.CharField(max_length=1, null=True)
     ipcsection = models.CharField(max_length=100, null=True)

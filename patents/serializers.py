@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import pt_main, pt_priority_claim, pt_abstract, pt_disclosure, pt_interested_party, pt_ipc_classification, pt_claim
+from .models import pt_main, pt_abstract, pt_disclosure, pt_interested_party, pt_ipc_classification, pt_claim
 
 class pt_mainSerializer(serializers.ModelSerializer):
     class Meta:

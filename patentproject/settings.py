@@ -77,13 +77,14 @@ WSGI_APPLICATION = 'patentproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# Below must be modified once I have the right information for the "render" database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'patentdata',
-        'USER': 'postgres',
-        'PASSWORD': 'Canada0404!',
-        'HOST': '127.0.0.1',
+        'USER': 'cipouser',
+        'PASSWORD': '7dgA5iC52JeMyaTbvdR3aRXWgKfKCsBT',
+        'HOST': 'dpg-cjsu9v63m8ac7396mk0g-a',
         'PORT': '5432',
     }
 }
