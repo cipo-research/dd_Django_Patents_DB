@@ -36,12 +36,6 @@ class DisclosureList(ListView):
     template_name = "searchdisclosure.html"
 
 @method_decorator(cache_page(60 * 5), name="dispatch")
-class PriorityClaimList(ListView):
-    model = pt_priority_claim
-    context_object_name = "entries"
-    template_name = "searchpriorityclaim.html"
-
-@method_decorator(cache_page(60 * 5), name="dispatch")
 class InterestedPartyList(ListView):
     model = pt_interested_party
     context_object_name = "entries"
@@ -61,7 +55,7 @@ def pt_mainFullTextSearch(request):
 
     search_query = SearchQuery(query, search_type='raw', config='english')
     # search_vector contains information on which columns of the respective table will get searched for any query made
-    search_vector = SearchVector('patentnumber', weight='A', config='english') + SearchVector('patapptitleenglish', weight='B') + SearchVector('patapptitlefrench', weight='C')
+    search_vector = SearchVector('patentnumber', weight='A', config='english') + SearchVector('filingdate', weight='B') + SearchVector('filingcountrycode', weight='C')
 
     records = pt_main.objects.annotate(
         search=search_vector,
@@ -84,7 +78,7 @@ def pt_abstractFullTextSearch(request):
 
     search_query = SearchQuery(query, search_type='raw', config='english')
     # search_vector contains information on which columns of the respective table will get searched for any query made
-    search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('abstracttext', weight='B')
+    search_vector = SearchVector('patentnumber', weight='A', config='english') + SearchVector('abstracttext', weight='B')
 
     records = pt_abstract.objects.annotate(
         search=search_vector,
@@ -107,7 +101,7 @@ def pt_claimFullTextSearch(request):
 
     search_query = SearchQuery(query, search_type='raw', config='english')
     # search_vector contains information on which columns of the respective table will get searched for any query made
-    search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('claimstext', weight='B')
+    search_vector = SearchVector('patentnumber', weight='A', config='english') + SearchVector('claimstext', weight='B')
 
     records = pt_claim.objects.annotate(
         search=search_vector,
@@ -130,7 +124,7 @@ def pt_disclosureFullTextSearch(request):
 
     search_query = SearchQuery(query, search_type='raw', config='english')
     # search_vector contains information on which columns of the respective table will get searched for any query made
-    search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('disclosuretext', weight='B')
+    search_vector = SearchVector('patentnumber', weight='A', config='english') + SearchVector('disclosuretext', weight='B')
 
     records = pt_disclosure.objects.annotate(
         search=search_vector,
@@ -153,7 +147,7 @@ def pt_interested_partyFullTextSearch(request):
 
     search_query = SearchQuery(query, search_type='raw', config='english')
     # search_vector contains information on which columns of the respective table will get searched for any query made
-    search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('partyname', weight='B') + SearchVector('partycountry', weight='C')
+    search_vector = SearchVector('patentnumber', weight='A', config='english') + SearchVector('partyname', weight='B') + SearchVector('partyprovince', weight='C')
 
     records = pt_interested_party.objects.annotate(
         search=search_vector,
@@ -176,7 +170,7 @@ def pt_ipc_classificationFullTextSearch(request):
 
     search_query = SearchQuery(query, search_type='raw', config='english')
     # search_vector contains information on which columns of the respective table will get searched for any query made
-    search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('ipcclass', weight='B') + SearchVector('ipcsubclass', weight='C') + SearchVector('ipcsection', weight='D')
+    search_vector = SearchVector('patentnumber', weight='A', config='english') + SearchVector('ipcclass', weight='B') + SearchVector('ipcsubclass', weight='C') + SearchVector('ipcsection', weight='D')
 
     records = pt_ipc_classification.objects.annotate(
         search=search_vector,
@@ -191,36 +185,9 @@ def pt_ipc_classificationFullTextSearch(request):
     }
     return Response(data)
 
-@api_view(['GET'])
-def pt_priority_claimFullTextSearch(request):
-    query  = request.GET.get('query')
-
-    query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
-
-    search_query = SearchQuery(query, search_type='raw', config='english')
-    # search_vector contains information on which columns of the respective table will get searched for any query made
-    search_vector = SearchVector('patentnumber_id', weight='A', config='english') + SearchVector('foreignapp_patnumber', weight='B') + SearchVector('priorityclaimcountry', weight='C')
-
-    records = pt_priority_claim.objects.annotate(
-        search=search_vector,
-        rank=SearchRank(search_vector, search_query)
-    ).filter(search=search_query).order_by("-rank")
-    
-    serializer = pt_priority_claimSerializer(records, many=True)
-    
-    data = {
-        "Keyword": query,
-        "results": serializer.data
-    }
-    return Response(data)
-
 class pt_mainViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = pt_mainSerializer
     queryset = pt_main.objects.all()
-
-class pt_priority_claimViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = pt_priority_claimSerializer
-    queryset = pt_priority_claim.objects.all()
 
 class pt_abstractViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = pt_abstractSerializer

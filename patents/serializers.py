@@ -6,11 +6,6 @@ class pt_mainSerializer(serializers.ModelSerializer):
         model = pt_main
         fields = '__all__'
 
-class pt_priority_claimSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = pt_priority_claim
-        fields = '__all__'
-
 class pt_abstractSerializer(serializers.ModelSerializer):
     class Meta:
         model = pt_abstract

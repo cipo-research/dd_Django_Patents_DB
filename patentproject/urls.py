@@ -27,14 +27,6 @@ pt_main_router.register(
     basename='pt_main',
 )
 
-# pt_priority_claim router
-pt_priority_claim_router = routers.SimpleRouter()
-pt_priority_claim_router.register(
-    r'pt_priority_claim',
-    pt_priority_claimViewSet,
-    basename='pt_priority_claim',
-)
-
 # pt_abstract router
 pt_abstract_router = routers.SimpleRouter()
 pt_abstract_router.register(
