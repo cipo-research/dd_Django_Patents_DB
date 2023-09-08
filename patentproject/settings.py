@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'patentproject.wsgi.application'
 # Below must be modified once I have the right information for the "render" database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'patentdata',
-        'USER': 'cipouser',
-        'PASSWORD': '7dgA5iC52JeMyaTbvdR3aRXWgKfKCsBT',
-        'HOST': 'dpg-cjsu9v63m8ac7396mk0g-a',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'neondb',
+        'USER': 'dhiguchi-ised',
+        'PASSWORD': 'IvWSDOmF3XA7',
+        'HOST': 'ep-curly-thunder-16235773.us-east-2.aws.neon.tech',
         'PORT': '5432',
     }
 }
