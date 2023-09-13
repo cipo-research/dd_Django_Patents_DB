@@ -34,8 +34,9 @@ class pt_main(models.Model):
 
 class pt_abstract(models.Model):
     patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
-    langfilingcode = models.CharField(max_length=2, null=True)
+    abstractsequencenumber = models.IntegerField(null=True)
     abstractlangcode = models.CharField(max_length=2, null=True)
+    abstractlang = models.CharField(max_length=25, null=True)
     abstracttext = models.TextField(null=True)
     id = models.IntegerField(null=False, primary_key=True)
     search_vector = SearchVectorField(null=True)

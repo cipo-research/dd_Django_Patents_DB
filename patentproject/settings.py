@@ -81,10 +81,10 @@ WSGI_APPLICATION = 'patentproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'dhiguchi-ised',
-        'PASSWORD': 'IvWSDOmF3XA7',
-        'HOST': 'ep-curly-thunder-16235773.us-east-2.aws.neon.tech',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'ised',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
