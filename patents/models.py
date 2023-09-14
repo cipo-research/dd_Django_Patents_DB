@@ -58,14 +58,14 @@ class pt_disclosure(models.Model):
     printedasamendedcountrycode = models.CharField(max_length=2, null=True)
     disclosuretext = models.TextField(null=True)
     id = models.IntegerField(null=False, primary_key=True)
-    search_vector = SearchVectorField(null=True)
+    #search_vector = SearchVectorField(null=True)
 
-    class Meta:
-        indexes = (GinIndex(fields=['search_vector']),)
+    #class Meta:
+    #    indexes = (GinIndex(fields=['search_vector']),)
 
 class pt_interested_party(models.Model):
     patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
-    interestedpartycount = models.IntegerField(null=False)
+    interestedpartycount = models.IntegerField(null=True)
     agenttypecode = models.CharField(max_length=25, null=True)
     appltypecode = models.CharField(max_length=25, null=True)
     interestedpartytypecode = models.CharField(max_length=4, null=True)
@@ -75,22 +75,22 @@ class pt_interested_party(models.Model):
     partyaddressline3 = models.CharField(max_length=100, null=True)
     partyaddressline4 = models.CharField(max_length=100, null=True)
     partyaddressline5 = models.CharField(max_length=100, null=True)
-    partycity = models.CharField(max_length=50, null=True)
+    partycity = models.CharField(max_length=75, null=True)
     partypostalcode = models.CharField(max_length=10, null=True)
     partyprovincecode = models.CharField(max_length=2, null=True)
     partyprovince = models.CharField(max_length=25, null=True)
     id = models.IntegerField(null=False, primary_key=True)
-    search_vector = SearchVectorField(null=True)
+    #search_vector = SearchVectorField(null=True)
 
-    class Meta:
-        indexes = (GinIndex(fields=['search_vector']),)
+    #class Meta:
+    #    indexes = (GinIndex(fields=['search_vector']),)
 
 class pt_ipc_classification(models.Model):
     patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
     ipcclasscount = models.IntegerField(null=True)
     filingdate = models.CharField(max_length=10, null=True)
     pctfilingdate = models.CharField(max_length=10, null=True)
-    classificationlevel = models.CharField(max_length=30, null=True)
+    classificationlevel = models.CharField(max_length=50, null=True)
     classificationstatuscode = models.CharField(max_length=1, null=True)
     classificationstatus = models.CharField(max_length=50, null=True)
     classofficecountrycode = models.CharField(max_length=2, null=True)
@@ -110,11 +110,11 @@ class pt_ipc_classification(models.Model):
     search_vector = SearchVectorField(null=True)
 
     class Meta:
-        indexes = (GinIndex(fields=['search_vector']),)
+       indexes = (GinIndex(fields=['search_vector']),)
 
 class pt_claim(models.Model):
     patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
-    claimtextsequencenumber = models.CharField(max_length=4, null=True)
+    claimtextsequencenumber = models.IntegerField(blank = True, null=True)
     parentappnumber = models.CharField(max_length=7, null=True)
     pctarticle2239fulfilleddate = models.DateField(null=True)
     pctappnumber = models.CharField(max_length=17, null=True)
@@ -129,4 +129,4 @@ class pt_claim(models.Model):
     search_vector = SearchVectorField(null=True)
 
     class Meta:
-        indexes = (GinIndex(fields=['search_vector']),)
+       indexes = (GinIndex(fields=['search_vector']),)
