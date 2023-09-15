@@ -21,7 +21,7 @@
       },
       {
         "src": "/(.*)",
-        "dest": "patentprojectwsgi.py"
+        "dest": "patentproject/wsgi.py"
       }
     ]
   }
