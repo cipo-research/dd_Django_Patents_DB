@@ -82,11 +82,11 @@ WSGI_APPLICATION = 'patentproject.wsgi.application'
 # Below must be modified once I have the right information for the "render" database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'ised',
-        'HOST': 'localhost',
+        'HOST': '142.53.89.24',
         'PORT': '5432',
     }
 }
