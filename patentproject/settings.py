@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from sshtunnel import SSHTunnelForwarder
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -79,6 +80,15 @@ WSGI_APPLICATION = 'patentproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# SSH Tunneling
+ssh_tunnel = SSHTunnelForwarder(
+    '142.53.89.24',
+    ssh_username = "HiguchiD",
+    ssh_password = "f9L02jaD7",
+    remote_bind_address = ('127.0.0.1', 5440)
+)
+ssh_tunnel.start()
+
 # Below must be modified once I have the right information for the "render" database
 DATABASES = {
     'default': {
@@ -86,8 +96,8 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'ised',
-        'HOST': '142.53.89.24',
-        'PORT': '5440',
+        'HOST': '127.0.0.1',
+        'PORT': ssh_tunnel.local_bind_port,
     }
 }
 
