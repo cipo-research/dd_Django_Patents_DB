@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'patentproject.wsgi.application'
 
 # SSH Tunneling
 ssh_tunnel = SSHTunnelForwarder(
-    '142.53.89.254',
+    '142.53.89.24',
     ssh_username = "HiguchiD",
     ssh_password = "f9L02jaD7",
     remote_bind_address = ('0.0.0.0', 5440)
