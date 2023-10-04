@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import pt_main, pt_abstract, pt_disclosure, pt_interested_party, pt_ipc_classification, pt_claim
 from .serializers import pt_mainSerializer, pt_abstractSerializer, pt_disclosureSerializer, pt_interested_partySerializer, pt_ipc_classificationSerializer, pt_claimSerializer
-from django.db.models import Q
+from django.db.models import Q, F, Sum
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
@@ -49,12 +49,15 @@ class IPCList(ListView):
 
 @api_view(['GET'])
 def pt_mainFullTextSearch(request):
-    query  = request.GET.get('query')
+    query = request.GET.get('query') # getting query from user
+    fields = request.GET.get('fields') # getting fields from user
+    if fields and len(fields) > 0: # fields is expected to be a comma-separated list (string)
+        fields = fields.split(',')
 
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
 
     search_query = SearchQuery(query, search_type='raw', config='english')
-    # search_vector contains information on which columns of the respective table will get searched for any query made
+
     search_vector = SearchVector('patentnumber', weight='A', config='english') + SearchVector('filingdate', weight='B') + SearchVector('filingcountrycode', weight='C')
 
     records = pt_main.objects.annotate(
@@ -62,7 +65,14 @@ def pt_mainFullTextSearch(request):
         rank=SearchRank(search_vector, search_query)
     ).filter(search=search_query).order_by("-rank")
     
-    serializer = pt_mainSerializer(records, many=True)
+    # Dynamically generate the serializer class with user-specified fields
+    if fields: # modifying serializer so that only specified fields are shown
+        dynamic_serializer_class = type('pt_mainSerializer', (pt_mainSerializer,),
+                                        {'Meta': type('Meta', (object,), {'model': pt_main, 'fields': fields})})
+    else: # when no fields are specified, all fields will be displayed
+        dynamic_serializer_class = pt_mainSerializer
+    
+    serializer = dynamic_serializer_class(records, many=True)
     
     data = {
         "Keyword": query,

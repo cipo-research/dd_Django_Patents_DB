@@ -32,20 +32,33 @@ class pt_main(models.Model):
     class Meta:
         indexes = (GinIndex(fields=['search_vector']),)
 
+class pt_priority_claim(models.Model):
+    patentnumber = models.ForeignKey(pt_main, related_name='priority_claim', on_delete=models.PROTECT)
+    foreignappnumber = models.IntegerField(null=True)
+    priorityclaimkindcode= models.CharField(max_length=2, null=True) # subject to change
+    priorityclaimcountrycode= models.CharField(max_length=2, null=True)
+    priorityclaimcountry = models.CharField(max_length=100, null=True)
+    calendardate = models.CharField(max_length=10, null=True)
+    id = models.IntegerField(null=False, primary_key=True)
+    # search_vector = SearchVectorField(null=True)
+
+    # class Meta:
+    #     indexes = (GinIndex(fields=['search_vector']),)
+
 class pt_abstract(models.Model):
-    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    patentnumber = models.ForeignKey(pt_main, related_name="abstract", on_delete=models.PROTECT)
     abstractsequencenumber = models.IntegerField(null=True)
     abstractlangcode = models.CharField(max_length=2, null=True)
     abstractlang = models.CharField(max_length=25, null=True)
     abstracttext = models.TextField(null=True)
     id = models.IntegerField(null=False, primary_key=True)
-    search_vector = SearchVectorField(null=True)
+    # search_vector = SearchVectorField(null=True)
 
-    class Meta:
-        indexes = (GinIndex(fields=['search_vector']),)
+    # class Meta:
+    #     indexes = (GinIndex(fields=['search_vector']),)
 
 class pt_disclosure(models.Model):
-    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    patentnumber = models.ForeignKey(pt_main, related_name='disclosure', on_delete=models.PROTECT)
     disclosuretextsequencenumber = models.IntegerField(null=True)
     parentappnumber = models.CharField(max_length=7, null=True)
     pctarticle2239fulfilleddate = models.DateField(null=True)
@@ -64,7 +77,7 @@ class pt_disclosure(models.Model):
     #    indexes = (GinIndex(fields=['search_vector']),)
 
 class pt_interested_party(models.Model):
-    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    patentnumber = models.ForeignKey(pt_main, related_name='interested_party', on_delete=models.PROTECT)
     interestedpartycount = models.IntegerField(null=True)
     agenttypecode = models.CharField(max_length=25, null=True)
     appltypecode = models.CharField(max_length=25, null=True)
@@ -86,7 +99,7 @@ class pt_interested_party(models.Model):
     #    indexes = (GinIndex(fields=['search_vector']),)
 
 class pt_ipc_classification(models.Model):
-    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    patentnumber = models.ForeignKey(pt_main, related_name= 'ipc_classification', on_delete=models.PROTECT)
     ipcclasscount = models.IntegerField(null=True)
     filingdate = models.CharField(max_length=10, null=True)
     pctfilingdate = models.CharField(max_length=10, null=True)
@@ -107,13 +120,13 @@ class pt_ipc_classification(models.Model):
     ipcsubgroupcode = models.TextField(null=True)
     ipcsubgroup = models.TextField(null=True)
     id = models.IntegerField(null=False, primary_key=True)
-    search_vector = SearchVectorField(null=True)
+    # search_vector = SearchVectorField(null=True)
 
-    class Meta:
-       indexes = (GinIndex(fields=['search_vector']),)
+    # class Meta:
+    #    indexes = (GinIndex(fields=['search_vector']),)
 
 class pt_claim(models.Model):
-    patentnumber = models.ForeignKey(pt_main, on_delete=models.PROTECT)
+    patentnumber = models.ForeignKey(pt_main, related_name='claim', on_delete=models.PROTECT)
     claimtextsequencenumber = models.IntegerField(blank = True, null=True)
     parentappnumber = models.CharField(max_length=7, null=True)
     pctarticle2239fulfilleddate = models.DateField(null=True)
@@ -126,7 +139,7 @@ class pt_claim(models.Model):
     printedasamendedcountrycode = models.CharField(max_length=2, null=True)
     claimstext = models.TextField(null=True)
     id = models.IntegerField(null=False, primary_key=True)
-    search_vector = SearchVectorField(null=True)
+    # search_vector = SearchVectorField(null=True)
 
-    class Meta:
-       indexes = (GinIndex(fields=['search_vector']),)
+    # class Meta:
+    #    indexes = (GinIndex(fields=['search_vector']),)

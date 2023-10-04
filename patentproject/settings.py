@@ -81,16 +81,15 @@ WSGI_APPLICATION = 'patentproject.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 # SSH Tunneling
-ssh_tunnel = SSHTunnelForwarder(
+""" ssh_tunnel = SSHTunnelForwarder(
     '142.53.89.24',
     ssh_username = "HiguchiD",
     ssh_password = "f9L02jaD7",
     remote_bind_address = ('0.0.0.0', 5440),
     local_bind_address = ('127.0.0.1',)
 )
-ssh_tunnel.start()
+ssh_tunnel.start() """
 
-# Below must be modified once I have the right information for the "render" database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -98,7 +97,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'ised',
         'HOST': '127.0.0.1',
-        'PORT': ssh_tunnel.local_bind_port,
+        'PORT': '5440',
     }
 }
 
