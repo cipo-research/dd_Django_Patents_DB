@@ -21,53 +21,13 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from dynamic_rest.routers import DynamicRouter
 from patents import views
-from patents.views import DisclosureList, IPCList, InterestedPartyList, ClaimList, AbstractList, MainList, pt_mainViewSet, pt_abstractViewSet, pt_disclosureViewSet, pt_interested_partyViewSet, pt_ipc_classificationViewSet, pt_claimViewSet
+from patents.views import pt_mainViewSet
 
 # pt_main router
 pt_main_router = DynamicRouter()
 pt_main_router.register(
     r'pt_main',
     pt_mainViewSet
-)
-
-# pt_abstract router
-pt_abstract_router = routers.SimpleRouter()
-pt_abstract_router.register(
-    r'pt_abstract',
-    pt_abstractViewSet,
-    basename='pt_abstract',
-)
-
-# pt_disclosure router
-pt_disclosure_router = routers.SimpleRouter()
-pt_disclosure_router.register(
-    r'pt_disclosure',
-    pt_disclosureViewSet,
-    basename='pt_disclosure',
-)
-
-# pt_interested_party router
-pt_interested_party_router = routers.SimpleRouter()
-pt_interested_party_router.register(
-    r'pt_interested_party',
-    pt_interested_partyViewSet,
-    basename='pt_interested_party',
-)
-
-# pt_ipc_classification router
-pt_ipc_classification_router = routers.SimpleRouter()
-pt_ipc_classification_router.register(
-    r'pt_ipc_classification',
-    pt_ipc_classificationViewSet,
-    basename='pt_ipc_classification',
-)
-
-# pt_claim router
-pt_claim_router = routers.SimpleRouter()
-pt_claim_router.register(
-    r'pt_claim',
-    pt_claimViewSet,
-    basename='pt_claim',
 )
 
 schema_view = get_schema_view(

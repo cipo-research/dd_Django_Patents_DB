@@ -1,5 +1,3 @@
-from rest_framework import serializers
-from rest_framework.serializers import SerializerMethodField
 from dynamic_rest.fields import DynamicRelationField
 from dynamic_rest.serializers import DynamicModelSerializer
 from .models import pt_main, pt_abstract, pt_disclosure, pt_interested_party, pt_ipc_classification, pt_claim, pt_priority_claim
