@@ -1,63 +1,55 @@
 from rest_framework import serializers
+from rest_framework.serializers import SerializerMethodField
+from dynamic_rest.fields import DynamicRelationField
+from dynamic_rest.serializers import DynamicModelSerializer
 from .models import pt_main, pt_abstract, pt_disclosure, pt_interested_party, pt_ipc_classification, pt_claim, pt_priority_claim
 
-class pt_abstractSerializer(serializers.ModelSerializer):
+class pt_abstractSerializer(DynamicModelSerializer):
     class Meta:
         model = pt_abstract
-        fields = '__all__'
+        name = 'pt_abstractSerializer'
+        fields = ["patentnumber_id", "abstractsequencenumber", "langfilingcode", "abstractlangcode", "abstracttext", "id"]
 
-class pt_disclosureSerializer(serializers.ModelSerializer):
+class pt_disclosureSerializer(DynamicModelSerializer):
     class Meta:
         model = pt_disclosure
-        fields = '__all__'
+        name = 'pt_disclosureSerializer'
+        fields = ["patentnumber_id", "disclosuretextsequencenumber", "langfilingcode", "disclosuretext", "id"]
 
-class pt_interested_partySerializer(serializers.ModelSerializer):
+class pt_interested_partySerializer(DynamicModelSerializer):
     class Meta:
         model = pt_interested_party
-        fields = '__all__'
+        name = 'pt_interested_partySerializer'
+        fields = ["patentnumber_id", "agenttypecode", "appltypecode", "interestedpartytypecode", "interestedpartytype", "ownerenabledate", "ownerenddate", "partyname", "partyaddressline1", "partyaddressline2", "partyaddressline3", "partyaddressline4", "partyaddressline5", "partycity", "partyprovincecode", "partyprovince", "partypostalcode", "partycountrycode", "partycountry", "id"]
 
-class pt_ipc_classificationSerializer(serializers.ModelSerializer):
+class pt_ipc_classificationSerializer(DynamicModelSerializer):
     class Meta:
         model = pt_ipc_classification
-        fields = '__all__'
+        name = 'pt_ipc_classificationSerializer'
+        fields = ["patentnumber_id", "ipcclassificationsequencenumber", "ipcversiondate", "classificationlevel", "classificationstatuscode", "classificationstatus", "ipcsectioncode", "ipcsection", "ipcclasscode", "ipcclass", "ipcsubclasscode", "ipcsubclass", "ipcmaingroupcode", "ipcgroup", "ipcsubgroupcode", "ipcsubgroup", "id"]
 
-class pt_claimSerializer(serializers.ModelSerializer):
+class pt_claimSerializer(DynamicModelSerializer):
     class Meta:
         model = pt_claim
-        fields = '__all__'
+        name = 'pt_claimSerializer'
+        fields = ["patentnumber_id", "claimtextsequencenumber", "langfilingcode", "claimstext", "id"]
+        # depth = 1
 
-class pt_priorityclaimSerializer(serializers.ModelSerializer):
+class pt_priorityclaimSerializer(DynamicModelSerializer):
     class Meta:
         model = pt_priority_claim
-        fields = '__all__'
+        name = 'pt_priorityclaimSerializer'
+        fields = ["patentnumber_id", "foreignappnumber", "priorityclaimkindcode", "priorityclaimcountrycode", "priorityclaimcountry", "calendardate", "id"]
 
-class pt_mainSerializer(serializers.ModelSerializer):
-
-    def __init__(self, *args, **kwargs):
-        # Don't pass the 'fields' arg up to the superclass
-        request = kwargs.get('context', {}).get('request')
-        str_fields = request.GET.get('fields', '') if request else None
-        fields = str_fields.split(',') if str_fields else None
-
-        # Instantiate the superclass normally
-        super(pt_mainSerializer, self).__init__(*args, **kwargs)
-
-        if fields is not None:
-            # Drop any fields that are not specified in the `fields` argument. 
-            # - Figure out why self.fields isnt working (maybe serializers.ModelSerializer -> ModelSerializer)
-            allowed = set(fields)
-            existing = set(self.fields)
-            for field_name in existing - allowed:
-                self.fields.pop(field_name)
-
-    claim = pt_claimSerializer(many=True, read_only=True)
-    abstract = pt_abstractSerializer(many=True, read_only=True)
-    disclosure = pt_disclosureSerializer(many=True, read_only=True)
-    interested_party = pt_interested_partySerializer(many=True, read_only=True)
-    ipc_classification = pt_ipc_classificationSerializer(many=True, read_only=True)
-    priority_claim = pt_priorityclaimSerializer(many=True, read_only=True)
+class pt_mainSerializer(DynamicModelSerializer):   
+    claim = DynamicRelationField(pt_claimSerializer, embed=True, many=True)
+    abstract = DynamicRelationField(pt_abstractSerializer, embed=True, many=True)
+    disclosure = DynamicRelationField(pt_disclosureSerializer, embed=True, many=True)
+    interested_party = DynamicRelationField(pt_interested_partySerializer, embed=True, many=True)
+    ipc_classification = DynamicRelationField(pt_ipc_classificationSerializer, embed=True, many=True)
+    priority_claim = DynamicRelationField(pt_priorityclaimSerializer, embed=True, many=True)
 
     class Meta:
         model = pt_main
-        #fields = '__all__'
-        fields = ['patentnumber', 'filingdate', 'pctfilingdate', 'grantdate', 'apptypecode', 'appstatuscode', 'bibliographicfileextractdate', 'countryofpublicationcode', 'documentkindtype', 'examinationrequestdate', 'filingcountrycode', 'langfilingcode', 'licenseforsaleindicator', 'pctappnumber' , 'pctpubnumber', 'pctpubdate', 'claim', 'abstract', 'disclosure', 'interested_party', 'ipc_classification', 'priority_claim']
+        name = 'pt_main'
+        fields = ['patentnumber', 'filingdate', 'grantdate', 'appstatuscode', 'apptypecode', 'patenttitleenglish', 'patenttitlefrench', 'bibliographicfileextractdate', 'countryofpublicationcode', 'documentkindtype', 'examinationrequestdate', 'filingcountrycode', 'langfilingcode', 'licenseforsaleindicator', 'pctappnumber' , 'pctpubnumber', 'pctpubdate', 'parentappnumber', 'pctarticle2239fulfilleddate', 'pctsect371date', 'pctpubcountrycode', 'pubkindtype', 'printedasamendedcountrycode', 'claim', 'abstract', 'disclosure', 'interested_party', 'ipc_classification', 'priority_claim']

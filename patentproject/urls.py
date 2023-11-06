@@ -14,17 +14,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
-from rest_framework import routers
+# from django.conf.urls import url 
+from django.urls import path, re_path, include
+from rest_framework import routers, permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from dynamic_rest.routers import DynamicRouter
 from patents import views
 from patents.views import DisclosureList, IPCList, InterestedPartyList, ClaimList, AbstractList, MainList, pt_mainViewSet, pt_abstractViewSet, pt_disclosureViewSet, pt_interested_partyViewSet, pt_ipc_classificationViewSet, pt_claimViewSet
 
 # pt_main router
-pt_main_router = routers.SimpleRouter()
+pt_main_router = DynamicRouter()
 pt_main_router.register(
     r'pt_main',
-    pt_mainViewSet,
-    basename='pt_main',
+    pt_mainViewSet
 )
 
 # pt_abstract router
@@ -67,24 +70,26 @@ pt_claim_router.register(
     basename='pt_claim',
 )
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Patent Database API",
+        default_version='v1',
+        description="Your API description",
+        # terms_of_service="https://www.yourapp.com/terms/",
+        # contact=openapi.Contact(email="contact@yourapp.com"),
+        # license=openapi.License(name="Your License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
 # URL patterns to access different tables, and their search funtionalities
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('swagger(?P<format>\.json|\.yaml)', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('api/', include(pt_main_router.urls)),
-    path('api/', include(pt_abstract_router.urls)),
-    path('api/', include(pt_disclosure_router.urls)),
-    path('api/', include(pt_interested_party_router.urls)),
-    path('api/', include(pt_ipc_classification_router.urls)),
-    path('api/', include(pt_claim_router.urls)),
-    path('ftsearch-main/', views.pt_mainFullTextSearch, name='searchmain'),
-    path('mainsearchpage/', MainList.as_view(), name="mainsearch-page"),
-    path('ftsearch-abstract/', views.pt_abstractFullTextSearch, name='searchabstract'),
-    path('abstractsearchpage/', AbstractList.as_view(), name="abstractsearch-page"),
-    path('ftsearch-claim/', views.pt_claimFullTextSearch, name='searchclaim'),
-    path('disclosuresearchpage/', DisclosureList.as_view(), name="disclosuresearch-page"),
-    path('ftsearch-disclosure/', views.pt_disclosureFullTextSearch, name='searchdisclosure'),
-    path('interestedpartysearchpage/', InterestedPartyList.as_view(), name="interestedpartysearch-page"),
-    path('ftsearch-interestedparty/', views.pt_interested_partyFullTextSearch, name='searchinterested'),
-    path('ipcsearchpage/', IPCList.as_view(), name="ipcsearch-page"),
-    path('ftsearch-ipcclassification/', views.pt_ipc_classificationFullTextSearch, name='searchipc'),
+    #path('mainsearchpage/', MainList.as_view(), name="mainsearch-page"),
+    #path('mainsearchpage/ftsearch-main/', views.pt_mainFullTextSearch, name='searchmain'),
 ]

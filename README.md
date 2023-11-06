@@ -2,20 +2,18 @@
 From the project's root directory, run the following command to launch the local server:
 python manage.py runserver
 
-From here you will be able to access each table and the data loaded onto it through https://127.0.0.1:8000/mainsearchpage
+From here you will be able to access each table and the data loaded onto it through https://127.0.0.1:8000/api/pt_main.
+This page loads every record in the database.
 
-This page will bring up a search bar (to search based on patent numbers), where users can enter and search for records relating to a specified patent number. By default, results will yield the fields of the main table related to the given patent number, and will also pull records linked to the given patent number from the claim, priority claim, disclosure, abstract, ipc classification, and interested party relations.
+Searches are now made through this URL path. Specific searches will be made via patent numbers as using the following path https://127.0.0.1:8000/api/pt_main/{patent number}. 
 
-The app also has the functionality for dynamic field selection. In the URL of a search, a 'fields' parameter can be used to specify which fields/relations you would like to display in the search result, and those not specified are not displayed. The fields parameter is designed to be a comma-separated list. For example: https://127.0.0.1:8000/ftsearch-main/?query=3014914&fields=patentnumber,apptypecode,claim will yield results for the fields patentnumber and apptypcode related to patent 3014914 and all related records in the claims relation.
+The app also has the functionality for dynamic field selection. In the URL of a search, there are two parameters, 'include' and 'exclude', which can be used to specify which fields/relations you would like to display in the search result, and those not specified are not displayed. To use these paremeters you must set exclude[]='field' if you want to exclude 'field' from the result, and similarly you would set include[]='field' to include a 'field' to the result (in the case 'field' is omitted for a certain reason). The include parameter takes priority over exclude.
 
-The following urls can be used to access the relevant tables in their entirety. Note that these pages will take a long time to load, as it loads ALL the entries.
-* https://127.0.0.1:8000/api/pt_main
-* https://127.0.0.1:8000/api/pt_disclosure
-* https://127.0.0.1:8000/api/pt_claim
-* https://127.0.0.1:8000/api/pt_priority_claim
-* https://127.0.0.1:8000/api/pt_interested_party
-* https://127.0.0.1:8000/api/pt_ipc_classification
-* https://127.0.0.1:8000/api/pt_abstract
+This feature is also useful for the nested dynamic field selection of tables like abstract, claim, disclosure, etc. To specify the nested field of a relation, dot notation is used. For example to specify the claimstext field from the claim relation, this is done through claim.claimstext.
+
+For example: http://127.0.0.1:8000/api/pt_main/3014017/?exclude[]=disclosure.*&include[]=disclosure.disclosuretext&exclude[]=interested_party will yield results such that it will return all fields relating to patent number 3014017, except the disclosure relation will only show its disclosuretext field, and the interested_party relation will be omitted.
+
+Full Swagger documentation is available at https://127.0.0.1:8000/swagger/
 
 # Tables and How to Modify Them
 In the models.py file under the patents directory, you will find a class for each model representing
@@ -23,6 +21,4 @@ a table in the PostgreSQL database. It is best that if you need to make modifica
 through postgres. 
 
 # Work in Progress
-Currently, to improve the API, the dynamic field selection should be selectable not just through manually typing each desired field into the URL as this would be inefficient and difficult for those who are not privy to all available fields. To remove this, we will work on adding checkbox forms to the search page for each field on the same page the searches are made.
-
-We will also be working on adding dynamic field selection for the records pulled from each of the claim, disclosure, priority claim, interested party, ipc classification, and abstract relations. 
+We are working on augmenting the search capability of the API by implementing functionality that allows users to make requests for records using a range of patent numbers and/or a comma-separated list of patent numbers.

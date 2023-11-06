@@ -36,6 +36,8 @@ ALLOWED_HOSTS = ['*', '.vercel.app', '.now.sh']
 
 INSTALLED_APPS = [
     'rest_framework',
+    'dynamic_rest',
+    'drf_yasg',
     'patents.apps.PatentsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -121,6 +123,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'dynamic_rest.renderers.DynamicBrowsableAPIRenderer',
+    ],
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

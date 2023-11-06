@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from .models import pt_main, pt_abstract, pt_disclosure, pt_interested_party, pt_ipc_classification, pt_claim
 from .serializers import pt_mainSerializer, pt_abstractSerializer, pt_disclosureSerializer, pt_interested_partySerializer, pt_ipc_classificationSerializer, pt_claimSerializer
@@ -9,70 +9,173 @@ from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.views.decorators.cache import cache_page
+from dynamic_rest.viewsets import DynamicModelViewSet, WithDynamicViewSetMixin
+#from drf_yasg.utils import swagger_auto_schema
 
 # Create your views here.
 @method_decorator(cache_page(60 * 5), name="dispatch")
 class MainList(ListView):
+    """
+    View for listing main entries.
+
+    This view fetches and displays a paginated list of main entries.
+
+    Attributes:
+        model (django.db.models.Model): The Django model representing main entries.
+        context_object_name (str): The name used for the list of entries in the template context.
+        template_name (str): The path to the template used for rendering the list.
+    """
     model = pt_main
     context_object_name = "entries"
     template_name = "searchmain.html"
 
 @method_decorator(cache_page(60 * 5), name="dispatch")
 class AbstractList(ListView):
+    """
+    View for listing abstract entries.
+
+    This view fetches and displays a paginated list of abstract entries.
+
+    Attributes:
+        model (django.db.models.Model): The Django model representing abstract entries.
+        context_object_name (str): The name used for the list of entries in the template context.
+        template_name (str): The path to the template used for rendering the list.
+    """
     model = pt_abstract
     context_object_name = "entries"
     template_name = "searchabstract.html"
 
 @method_decorator(cache_page(60 * 5), name="dispatch")
 class ClaimList(ListView):
+    """
+    View for listing claim entries.
+
+    This view fetches and displays a paginated list of claim entries.
+
+    Attributes:
+        model (django.db.models.Model): The Django model representing claim entries.
+        context_object_name (str): The name used for the list of entries in the template context.
+        template_name (str): The path to the template used for rendering the list.
+    """
     model = pt_claim
     context_object_name = "entries"
     template_name = "searchclaim.html"   
 
 @method_decorator(cache_page(60 * 5), name="dispatch")
 class DisclosureList(ListView):
+    """
+    View for listing disclosure entries.
+
+    This view fetches and displays a paginated list of disclosure entries.
+
+    Attributes:
+        model (django.db.models.Model): The Django model representing disclosure entries.
+        context_object_name (str): The name used for the list of entries in the template context.
+        template_name (str): The path to the template used for rendering the list.
+    """
     model = pt_disclosure
     context_object_name = "entries"
     template_name = "searchdisclosure.html"
 
 @method_decorator(cache_page(60 * 5), name="dispatch")
 class InterestedPartyList(ListView):
+    """
+    View for listing interested party entries.
+
+    This view fetches and displays a paginated list of interested party entries.
+
+    Attributes:
+        model (django.db.models.Model): The Django model representing interested party entries.
+        context_object_name (str): The name used for the list of entries in the template context.
+        template_name (str): The path to the template used for rendering the list.
+    """
     model = pt_interested_party
     context_object_name = "entries"
     template_name = "searchinterestedparty.html"
 
 @method_decorator(cache_page(60 * 5), name="dispatch")
 class IPCList(ListView):
+    """
+    View for listing IPC entries.
+
+    This view fetches and displays a paginated list of IPC entries.
+
+    Attributes:
+        model (django.db.models.Model): The Django model representing IPC entries.
+        context_object_name (str): The name used for the list of entries in the template context.
+        template_name (str): The path to the template used for rendering the list.
+    """
     model = pt_ipc_classification
     context_object_name = "entries"
     template_name = "searchipc.html"
 
 @api_view(['GET'])
 def pt_mainFullTextSearch(request):
-    query = request.GET.get('query') # getting query from user
-    fields = request.GET.get('fields') # getting fields from user
+    """
+    API view for full-text search with dynamic field selection on pt_main entries and connected relations.
+    
+    This API view performs a full-text search on pt_main entries based on user-specified query and fields.
+    It also allows for dynamic field selection on nested relations with the abstract, claim, disclosure, interested party, ipc classification, and priority claim tables.
+
+    Args:
+        request (rest_framework.request.Request): The HTTP request object.
+
+    Query Parameters:
+        - `query` (str): The search query for full-text search. The query should be a patentnumber
+        - `fields` (str, optional): Comma-separated list of fields to search. If not provided, all fields will be searched.
+        - `abstract` (str, optional): Comma-separated list of fields specific to patents_pt_abstract table to filter results. If not provided, all abstract fields will be displayed.
+        - `claim` (str, optional): Comma-separated list of fields specific to patents_pt_claim table to filter results. If not provided, all claim fields will be displayed.
+        - `disclosure` (str, optional): Comma-separated list of fields specific to patents_pt_disclosure table to filter results. If not provided, all disclosure fields will be displayed.
+        - `interestedparty` (str, optional): Comma-separated list of fields specific to patents_pt_interested_party table to filter results. If not provided, all interested party fields will be displayed.
+        - `ipcclassification` (str, optional): Comma-separated list of fields specific to patents_pt_ipc_classification table to filter results. If not provided, all ipc classification fields will be displayed.
+        - `priorityclaim` (str, optional): Comma-separated list of fields specific to patents_pt_priority_claim table to filter results. If not provided, all priority claim fields will be displayed.
+    """
+    query = request.GET.get('query', None) # getting query from user
+    fields = request.GET.get('fields', None) # getting fields from user
+    claim_fields = request.GET.get('claim', None) # getting claim fields from user
+    disclosure_fields = request.GET.get('disclosure', None) # getting disclosure fields from user
+    interestedparty_fields = request.GET.get('interestedparty', None) # getting interested party fields from user
+    ipc_fields = request.GET.get('ipcclassification', None) # getting ipc classification fields from user
+    abstract_fields = request.GET.get('abstract', None) # getting abstract fields from user
+
     if fields and len(fields) > 0: # fields is expected to be a comma-separated list (string)
         fields = fields.split(',')
+    if claim_fields and len(claim_fields) > 0: 
+        claim_fields = claim_fields.split(',')
+    if disclosure_fields and len(disclosure_fields) > 0: 
+        disclosure_fields = disclosure_fields.split(',')
+    if interestedparty_fields and len(interestedparty_fields) > 0:
+        interestedparty_fields = interestedparty_fields.split(',')
+    if ipc_fields and len(ipc_fields) > 0: 
+        ipc_fields = ipc_fields.split(',')
+    if abstract_fields and len(abstract_fields) > 0: 
+        abstract_fields = abstract_fields.split(',')
 
+    keyargs = {'main': fields, 'claim': claim_fields, 'disclosure': disclosure_fields, 'interestedparty': interestedparty_fields, 'ipc': ipc_fields, 'abstract': abstract_fields}
+
+    # Possibly modify to remove any whitespace, and interpret query as a comma-separated list with
+    #   use for '-' character to cover ranges of patent numbers
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
 
     search_query = SearchQuery(query, search_type='raw', config='english')
 
-    search_vector = SearchVector('patentnumber', weight='A', config='english') + SearchVector('filingdate', weight='B') + SearchVector('filingcountrycode', weight='C')
+    search_vector = SearchVector('patentnumber', weight='A', config='english')
 
-    records = pt_main.objects.annotate(
+    # search results
+    mainrecords = pt_main.objects.annotate(
         search=search_vector,
         rank=SearchRank(search_vector, search_query)
     ).filter(search=search_query).order_by("-rank")
-    
-    # Dynamically generate the serializer class with user-specified fields
-    if fields: # modifying serializer so that only specified fields are shown
-        dynamic_serializer_class = type('pt_mainSerializer', (pt_mainSerializer,),
-                                        {'Meta': type('Meta', (object,), {'model': pt_main, 'fields': fields})})
-    else: # when no fields are specified, all fields will be displayed
-        dynamic_serializer_class = pt_mainSerializer
-    
-    serializer = dynamic_serializer_class(records, many=True)
+
+    dynamic_serializer_class = pt_mainSerializer(mainrecords, many=True, context=keyargs)
+
+    serializer = dynamic_serializer_class
+
+    # Dynamically select fields for the main serializer data - add other table fields similarly
+    # if fields:
+    #     serializer_data = [{field: record[field] for field in fields} for record in serializer.data]
+    # else:
+    #     serializer_data = serializer.data 
     
     data = {
         "Keyword": query,
@@ -82,6 +185,17 @@ def pt_mainFullTextSearch(request):
 
 @api_view(['GET'])
 def pt_abstractFullTextSearch(request):
+    """
+    API view for full-text search on pt_abstract entries.
+
+    This API view performs a full-text search on pt_abstract entries based on user-specified query.
+
+    Args:
+        request (rest_framework.request.Request): The HTTP request object.
+
+    Query Parameters:
+        - `query` (str): The search query for full-text search.
+    """
     query  = request.GET.get('query')
 
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
@@ -105,6 +219,17 @@ def pt_abstractFullTextSearch(request):
 
 @api_view(['GET'])
 def pt_claimFullTextSearch(request):
+    """
+    API view for full-text search on pt_claim entries.
+
+    This API view performs a full-text search on pt_claim entries based on user-specified query.
+
+    Args:
+        request (rest_framework.request.Request): The HTTP request object.
+
+    Query Parameters:
+        - `query` (str): The search query for full-text search.
+    """
     query  = request.GET.get('query')
 
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
@@ -128,6 +253,17 @@ def pt_claimFullTextSearch(request):
 
 @api_view(['GET'])
 def pt_disclosureFullTextSearch(request):
+    """
+    API view for full-text search on pt_disclosure entries.
+
+    This API view performs a full-text search on pt_disclosure entries based on user-specified query.
+
+    Args:
+        request (rest_framework.request.Request): The HTTP request object.
+
+    Query Parameters:
+        - `query` (str): The search query for full-text search.
+    """
     query  = request.GET.get('query')
 
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
@@ -151,6 +287,17 @@ def pt_disclosureFullTextSearch(request):
 
 @api_view(['GET'])
 def pt_interested_partyFullTextSearch(request):
+    """
+    API view for full-text search on pt_interested_party entries.
+
+    This API view performs a full-text search on pt_interested_party entries based on user-specified query.
+
+    Args:
+        request (rest_framework.request.Request): The HTTP request object.
+
+    Query Parameters:
+        - `query` (str): The search query for full-text search.
+    """
     query  = request.GET.get('query')
 
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
@@ -174,6 +321,17 @@ def pt_interested_partyFullTextSearch(request):
 
 @api_view(['GET'])
 def pt_ipc_classificationFullTextSearch(request):
+    """
+    API view for full-text search on pt_ipc_classification entries.
+
+    This API view performs a full-text search on pipc_classification entries based on user-specified query.
+
+    Args:
+        request (rest_framework.request.Request): The HTTP request object.
+
+    Query Parameters:
+        - `query` (str): The search query for full-text search.
+    """
     query  = request.GET.get('query')
 
     query = "|".join(query.split(' ')) #joining the space separated words with | for OR condition
@@ -195,26 +353,97 @@ def pt_ipc_classificationFullTextSearch(request):
     }
     return Response(data)
 
-class pt_mainViewSet(viewsets.ReadOnlyModelViewSet):
+class pt_mainViewSet(WithDynamicViewSetMixin, viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for accessing pt_main entries.
+
+    This ViewSet provides read-only access to pt_main entries.
+
+    Attributes:
+        serializer_class (rest_framework.serializers.Serializer): The serializer class used for pt_main entries.
+        queryset (django.db.models.QuerySet): The queryset representing all pt_main entries.
+    """
     serializer_class = pt_mainSerializer
     queryset = pt_main.objects.all()
 
+    @action(detail=False, methods='get')
+    def multiple_queries(self, request, *args, **kwargs):
+        queries = request.data.get('queries', [])
+
+        results = []
+        for query in queries:
+            result = self.process_single_query(query)
+            results.append(result)
+
+        return Response(results)
+    
+    def process_single_query(self, query):
+        # Implement your logic to process a single query here
+        # This could involve querying the database, filtering, etc.
+        # Return the result of the query
+        pass
+
 class pt_abstractViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for accessing pt_abstract entries.
+
+    This ViewSet provides read-only access to pt_abstract entries.
+
+    Attributes:
+        serializer_class (rest_framework.serializers.Serializer): The serializer class used for pt_abstract entries.
+        queryset (django.db.models.QuerySet): The queryset representing all pt_abstract entries.
+    """
     serializer_class = pt_abstractSerializer
     queryset = pt_abstract.objects.all()
 
 class pt_disclosureViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for accessing pt_disclosure entries.
+
+    This ViewSet provides read-only access to pt_disclosure entries.
+
+    Attributes:
+        serializer_class (rest_framework.serializers.Serializer): The serializer class used for pt_disclosure entries.
+        queryset (django.db.models.QuerySet): The queryset representing all pt_disclosure entries.
+    """
     serializer_class = pt_disclosureSerializer
     queryset = pt_disclosure.objects.all()
 
 class pt_interested_partyViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for accessing pt_interested_party entries.
+
+    This ViewSet provides read-only access to pt_interested_party entries.
+
+    Attributes:
+        serializer_class (rest_framework.serializers.Serializer): The serializer class used for pt_interested_party entries.
+        queryset (django.db.models.QuerySet): The queryset representing all pt_interested_party entries.
+    """
     serializer_class = pt_interested_partySerializer
     queryset = pt_interested_party.objects.all()
 
 class pt_ipc_classificationViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for accessing pt_ipc_classification entries.
+
+    This ViewSet provides read-only access to pt_ipc_classification entries.
+
+    Attributes:
+        serializer_class (rest_framework.serializers.Serializer): The serializer class used for pt_ipc_classification entries.
+        queryset (django.db.models.QuerySet): The queryset representing all pt_ipc_classification entries.
+    """
     serializer_class = pt_ipc_classificationSerializer
     queryset = pt_ipc_classification.objects.all()
 
 class pt_claimViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for accessing pt_claim entries.
+
+    This ViewSet provides read-only access to pt_claim entries.
+
+    Attributes:
+        serializer_class (rest_framework.serializers.Serializer): The serializer class used for pt_claim entries.
+        queryset (django.db.models.QuerySet): The queryset representing all pt_claim entries.
+    """
     serializer_class = pt_claimSerializer
     queryset = pt_claim.objects.all()
