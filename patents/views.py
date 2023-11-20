@@ -95,7 +95,32 @@ class pt_mainViewSet(WithDynamicViewSetMixin, viewsets.ReadOnlyModelViewSet):
         queryset (django.db.models.QuerySet): The queryset representing all pt_main entries.
     """
     serializer_class = pt_mainSerializer
-    queryset = pt_main.objects.all()
+    # queryset = pt_main.objects.all()
+
+    def get_queryset(self):
+        fullqueryset = pt_main.objects.all()
+        newqueryset = pt_main.objects.none()
+        patentlist = self.request.query_params.get('patentnumber', None) # assume this is either a comma-separated list or None
+        if patentlist is not None:
+            patentrange = patentlist.split(',')
+            for elem in patentrange:
+                # Idea is to identify patent numbers and define queryset based on it
+                if '-' in elem:
+                    # assuming elements with '-' are of the form 'X-Y' where X and Y are positive integers and X < Y
+                    ranges = elem.split('-') 
+                    low = ranges[0]
+                    high = ranges[1]
+                    
+                    # implement helper to check if low or high contain characters that are not numerical
+                    for num in range(int(low), int(high) + 1):
+                        newqueryset = newqueryset | fullqueryset.filter(patentnumber=num)
+                else:
+                    # assuming all other element types are just singular patent numbers
+                    # using same helper as above, verify elem only contains numerical characters
+                    newqueryset = newqueryset | fullqueryset.filter(patentnumber=int(elem))
+                    
+                #queryset = queryset.filter(patentnumber=filter_value) # placeholder for now - WILL BE REPLACED
+        return newqueryset
 
 class pt_abstractViewSet(viewsets.ReadOnlyModelViewSet):
     """

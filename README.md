@@ -15,6 +15,11 @@ For example: http://127.0.0.1:8000/api/pt_main/3014017/?exclude[]=disclosure.*&i
 
 Full Swagger documentation is available at https://127.0.0.1:8000/swagger/
 
+To take full advantage of the API and utilize the multi-patent search functionality, the url pattern is slightly different. For example the following is a valid multi-patent search:
+http://127.0.0.1:8000/api/pt_main/?patentnumber=3014011-3014015,3015000,3017012
+
+This multi-patent search is also compatible with the dynamic field selection also, and can be chained with it using the & operator.
+
 # Tables and How to Modify Them
 In the models.py file under the patents directory, you will find a class for each model representing
 a table in the PostgreSQL database. It is best that if you need to make modifications to the database, or the table structure that you do it by making changes to this file, and making the migrations (i.e. executing 'python manage.py makemigrations' then 'python manage.py migrate') opposed to making changes
