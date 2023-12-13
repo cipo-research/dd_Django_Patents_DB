@@ -26,4 +26,4 @@ a table in the PostgreSQL database. It is best that if you need to make modifica
 through postgres. 
 
 # Work in Progress
-We are working on augmenting the search capability of the API by implementing functionality that allows users to make requests for records using a range of patent numbers and/or a comma-separated list of patent numbers.
+We are working on developing a system that will continuously and automatically update our database with the weekly XML data so that the data accessible by the API is always up-to date.
