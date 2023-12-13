@@ -25,5 +25,5 @@ In the models.py file under the patents directory, you will find a class for eac
 a table in the PostgreSQL database. It is best that if you need to make modifications to the database, or the table structure that you do it by making changes to this file, and making the migrations (i.e. executing 'python manage.py makemigrations' then 'python manage.py migrate') opposed to making changes
 through postgres. 
 
-# Work in Progress
+# Work-in Progress
 We are working on developing a system that will continuously and automatically update our database with the weekly XML data so that the data accessible by the API is always up-to date.
