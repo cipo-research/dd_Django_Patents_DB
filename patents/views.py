@@ -124,7 +124,9 @@ class pt_mainViewSet(WithDynamicViewSetMixin, viewsets.ReadOnlyModelViewSet):
             except (ValueError, ValidationError) as e:
                 # Handle invalid input format
                 return Response({'error': 'Invalid patentnumber format'}, status=400)
-        
+        else:
+            newqueryset = fullqueryset
+
         return newqueryset
 
 class pt_abstractViewSet(viewsets.ReadOnlyModelViewSet):
