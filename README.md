@@ -27,3 +27,8 @@ through postgres.
 
 # Work-in Progress
 We are working on developing a system that will continuously and automatically update our database with the weekly XML data so that the data accessible by the API is always up-to date.
+
+# Trademarks DB
+The folder "trademarksdb" contains files that compose the database architecture as listed in the data dictionary: https://ised-isde.canada.ca/site/canadian-intellectual-property-office/en/trademarks-researcher-datasets-data-dictionary
+
+It is important to note that these model files have never been tested before, as the rest of the api needs to be built first. Please keep this in mind when loading data, as some issues may be due to small bugs in the table rules & restrictions.
